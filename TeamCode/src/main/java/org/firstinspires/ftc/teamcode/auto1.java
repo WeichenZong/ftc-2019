@@ -46,11 +46,12 @@ public class auto1 extends LinearOpMode {
     DcMotor armmain =null;
     Servo armservo1 =  null;
     Servo armservo2 = null;
-
+    //global varible
+    int tetrixencoderfactor=1440;
+    int andmarkencoderfactor=1120;
 
 
     public void runOpMode() {
-
         // define motors
         leftmotor1 = hardwareMap.get(DcMotor.class, "leftmotor1");
         leftmotor2 = hardwareMap.get(DcMotor.class, "leftmotor2");
@@ -79,19 +80,22 @@ public class auto1 extends LinearOpMode {
         }
     }
 
-    public void goStraigt(){
+    public void goStraigt(int distance){
 
     }
-    public void rightTurn(){
+    public void rightTurn(int distance){
 
     }
-    public void leftTurn(){
+    public void leftTurn(int distance){
 
     }
-    public void leftDrift(){
+    public void leftDrift(int distance){
 
     }
-    public void rightDrift(){
+    public void rightDrift(int distance){
 
+    }
+    public double cmToWheelRotation(int distance){
+        return (distance/(3.1416*15.2))*tetrixencoderfactor;
     }
 }

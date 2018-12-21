@@ -72,7 +72,10 @@ public class OPmode extends LinearOpMode {
         //initialize encoders
         while (opModeIsActive()) {
             
-
+            leftmotor1.setPower(0.5*(-gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_x));
+            leftmotor2.setPower(0.5*(-gamepad1.left_stick_y+gamepad1.right_stick_x-gamepad1.left_stick_x));
+            rightmotor1.setPower(0.5*(-gamepad1.left_stick_y-gamepad1.right_stick_x-gamepad1.left_stick_x));
+            rightmotor2.setPower(0.5*(-gamepad1.left_stick_y-gamepad1.right_stick_x+gamepad1.left_stick_x));
         }
     }
 }
