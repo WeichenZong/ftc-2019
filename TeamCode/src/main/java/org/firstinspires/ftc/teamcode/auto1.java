@@ -74,28 +74,54 @@ public class auto1 extends LinearOpMode {
         armlift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armmain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while (opModeIsActive()) {
-            
-
-        }
-    }
-
-    public void goStraigt(int distance){
+      waitForStart();
+      // enter your methods here
 
     }
-    public void rightTurn(int distance){
 
+    public void goStraigt(int power){
+        leftmotor1.setPower(power);
+        leftmotor2.setPower(power);
+        rightmotor1.setPower(power);
+        rightmotor2.setPower(power);
     }
-    public void leftTurn(int distance){
+    public void rightTurn(int power){
+        leftmotor1.setPower(power);
+        leftmotor2.setPower(power);
+        rightmotor1.setPower(-power);
+        rightmotor2.setPower(-power);
+    }
+    public void leftTurn(int power){
+        leftmotor1.setPower(-power);
+        leftmotor2.setPower(-power);
+        rightmotor1.setPower(power);
+        rightmotor2.setPower(power);
+    }
+    public void leftDrift(int power){
+        leftmotor1.setPower(power);
+        leftmotor2.setPower(power);
+        rightmotor1.setPower(power);
+        rightmotor2.setPower(power);
+    }
+    public void rightDrift(int power){
+        leftmotor1.setPower(power);
+        leftmotor2.setPower(power);
+        rightmotor1.setPower(power);
+        rightmotor2.setPower(power);
+    }
+    public void stopWheel(){
+        leftmotor1.setPower(0.0);
+        leftmotor2.setPower(0.0);
+        rightmotor1.setPower(0.0);
+        rightmotor2.setPower(0.0);
+    }
 
-    }
-    public void leftDrift(int distance){
-
-    }
-    public void rightDrift(int distance){
-
-    }
     public double cmToWheelRotation(int distance){
         return (distance/(3.1416*15.2))*tetrixencoderfactor;
     }
+    public double cmToArmRotation(int distance){
+        return (distance/(3.1416*15.2))*andmarkencoderfactor;
+    }
+
+
 }
