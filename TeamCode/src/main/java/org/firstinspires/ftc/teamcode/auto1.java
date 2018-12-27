@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -121,6 +122,16 @@ public class auto1 extends LinearOpMode {
     }
     public double cmToArmRotation(int distance){
         return (distance/(3.1416*15.2))*andmarkencoderfactor;
+    }
+    public void forwordDistance(double power,int distance){
+        leftmotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftmotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightmotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightmotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+
+
     }
 
 
