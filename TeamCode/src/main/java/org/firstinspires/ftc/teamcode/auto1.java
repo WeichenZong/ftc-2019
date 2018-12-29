@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -36,7 +37,8 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="OPmode")
+
+@Disabled
 public class auto1 extends LinearOpMode {
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftmotor1 = null;
@@ -68,10 +70,7 @@ public class auto1 extends LinearOpMode {
         leftmotor1.setDirection(DcMotor.Direction.REVERSE);
 
         //initialize encoders
-        leftmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftmotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightmotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setMotorsRunUsingEncoders();
         armlift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armmain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -80,59 +79,120 @@ public class auto1 extends LinearOpMode {
 
     }
 
-    public void goStraigt(int power){
+    public void goStraigt(double power){
         leftmotor1.setPower(power);
         leftmotor2.setPower(power);
         rightmotor1.setPower(power);
         rightmotor2.setPower(power);
     }
-    public void rightTurn(int power){
+    public void rightTurn(double power){
         leftmotor1.setPower(power);
         leftmotor2.setPower(power);
         rightmotor1.setPower(-power);
         rightmotor2.setPower(-power);
     }
-    public void leftTurn(int power){
+    public void leftTurn(double power){
         leftmotor1.setPower(-power);
         leftmotor2.setPower(-power);
         rightmotor1.setPower(power);
         rightmotor2.setPower(power);
     }
-    public void leftDrift(int power){
-        leftmotor1.setPower(power);
+    public void leftDrift(double power){
+        leftmotor1.setPower(-power);
         leftmotor2.setPower(power);
         rightmotor1.setPower(power);
-        rightmotor2.setPower(power);
+        rightmotor2.setPower(-power);
     }
-    public void rightDrift(int power){
+    public void rightDrift(double power){
         leftmotor1.setPower(power);
-        leftmotor2.setPower(power);
-        rightmotor1.setPower(power);
+        leftmotor2.setPower(-power);
+        rightmotor1.setPower(-power);
         rightmotor2.setPower(power);
     }
     public void stopWheel(){
-        leftmotor1.setPower(0.0);
-        leftmotor2.setPower(0.0);
-        rightmotor1.setPower(0.0);
-        rightmotor2.setPower(0.0);
+        goStraigt(0);
     }
 
-    public double cmToWheelRotation(int distance){
-        return (distance/(3.1416*15.2))*tetrixencoderfactor;
+    public int cmToWheelRotation(int distance){
+        return (int)(distance/(3.1416*15.2))*tetrixencoderfactor;
     }
-    public double cmToArmRotation(int distance){
-        return (distance/(3.1416*15.2))*andmarkencoderfactor;
+    public int cmToArmRotation(int distance){
+        return  (int) (distance/(3.1416*15.2))*andmarkencoderfactor;
     }
-    public void forwordDistance(double power,int distance){
+    public boolean encodersAreBusy(){
+        return leftmotor1.isBusy()&&leftmotor2.isBusy()&&rightmotor2.isBusy()&&rightmotor1.isBusy();
+    }
+    public void setMotorsStopAndResetEncoders(){
         leftmotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftmotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightmotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightmotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-
+    }
+    public void setMotorsRunToPosition(){
+        leftmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftmotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightmotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void setMotorsRunUsingEncoders(){
+        leftmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftmotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightmotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void forwordDistance(double power,int distance){
+        setMotorsStopAndResetEncoders();
+        leftmotor1.setTargetPosition(cmToWheelRotation(distance));
+        leftmotor2.setTargetPosition(cmToWheelRotation(distance));
+        rightmotor2.setTargetPosition(cmToWheelRotation(distance));
+        rightmotor1.setTargetPosition(cmToWheelRotation(distance));
+        setMotorsRunToPosition();
+        goStraigt(power);
+        while(encodersAreBusy()){}
+        stopWheel();
+        setMotorsRunUsingEncoders();
 
     }
 
+    public void backwordDistance(double power,int distance){
+        setMotorsStopAndResetEncoders();
+        leftmotor1.setTargetPosition(cmToWheelRotation(-distance));
+        leftmotor2.setTargetPosition(cmToWheelRotation(-distance));
+        rightmotor2.setTargetPosition(cmToWheelRotation(-distance));
+        rightmotor1.setTargetPosition(cmToWheelRotation(-distance));
+        setMotorsRunToPosition();
+        goStraigt(-power);
+        while(encodersAreBusy()){}
+        stopWheel();
+        setMotorsRunUsingEncoders();
+
+    }
+
+    public void leftDistance(double power,int distance){
+        setMotorsStopAndResetEncoders();
+        leftmotor1.setTargetPosition(cmToWheelRotation(distance));
+        leftmotor2.setTargetPosition(cmToWheelRotation(distance));
+        rightmotor2.setTargetPosition(cmToWheelRotation(distance));
+        rightmotor1.setTargetPosition(cmToWheelRotation(distance));
+        setMotorsRunToPosition();
+        goStraigt(power);
+        while(encodersAreBusy()){}
+        stopWheel();
+        setMotorsRunUsingEncoders();
+
+    }
+    public void rightDistance(double power,int distance){
+        setMotorsStopAndResetEncoders();
+        leftmotor1.setTargetPosition(cmToWheelRotation(distance));
+        leftmotor2.setTargetPosition(cmToWheelRotation(distance));
+        rightmotor2.setTargetPosition(cmToWheelRotation(distance));
+        rightmotor1.setTargetPosition(cmToWheelRotation(distance));
+        setMotorsRunToPosition();
+        goStraigt(power);
+        while(encodersAreBusy()){}
+        stopWheel();
+        setMotorsRunUsingEncoders();
+
+    }
 
 }
