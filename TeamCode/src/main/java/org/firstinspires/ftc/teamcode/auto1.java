@@ -31,11 +31,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.disnodeteam.dogecv.CameraViewDisplay;
+import com.disnodeteam.dogecv.DogeCV;
+import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
+import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
 
 
 @Disabled
@@ -52,6 +54,8 @@ public class auto1 extends LinearOpMode {
     //global varible
     int tetrixencoderfactor=1440;
     int andmarkencoderfactor=1120;
+    GoldAlignDetector detector;
+
 
 
     public void runOpMode() {
@@ -73,6 +77,29 @@ public class auto1 extends LinearOpMode {
         setMotorsRunUsingEncoders();
         armlift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armmain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //OpenCV detector
+        telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
+
+        // Set up detector
+        detector = new GoldAlignDetector(); // Create detector
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance()); // Initialize it with the app context and camera
+        detector.useDefaults(); // Set detector to use default settings
+
+        // Optional tuning
+        detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
+        detector.downscale = 0.4; // How much to downscale the input frames
+
+        detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
+        //detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
+        detector.maxAreaScorer.weight = 0.005; //
+
+        detector.ratioScorer.weight = 5; //
+        detector.ratioScorer.perfectRatio = 1.0; // Ratio adjustment
+
+        detector.enable(); // Start the detector
+
+
 
       waitForStart();
       // enter your methods here
@@ -99,15 +126,15 @@ public class auto1 extends LinearOpMode {
     }
     public void leftDrift(double power){
         leftmotor1.setPower(-power);
+        rightmotor2.setPower(-power);
         leftmotor2.setPower(power);
         rightmotor1.setPower(power);
-        rightmotor2.setPower(-power);
     }
     public void rightDrift(double power){
-        leftmotor1.setPower(power);
-        leftmotor2.setPower(-power);
         rightmotor1.setPower(-power);
+        leftmotor2.setPower(-power);
         rightmotor2.setPower(power);
+        leftmotor1.setPower(power);
     }
     public void stopWheel(){
         goStraigt(0);
@@ -143,9 +170,9 @@ public class auto1 extends LinearOpMode {
     public void forwordDistance(double power,int distance){
         setMotorsStopAndResetEncoders();
         leftmotor1.setTargetPosition(cmToWheelRotation(distance));
+        rightmotor1.setTargetPosition(cmToWheelRotation(distance));
         leftmotor2.setTargetPosition(cmToWheelRotation(distance));
         rightmotor2.setTargetPosition(cmToWheelRotation(distance));
-        rightmotor1.setTargetPosition(cmToWheelRotation(distance));
         setMotorsRunToPosition();
         goStraigt(power);
         while(encodersAreBusy()){}
@@ -154,7 +181,7 @@ public class auto1 extends LinearOpMode {
 
     }
 
-    public void backwordDistance(double power,int distance){
+    public void backwardDistance(double power,int distance){
         setMotorsStopAndResetEncoders();
         leftmotor1.setTargetPosition(cmToWheelRotation(-distance));
         leftmotor2.setTargetPosition(cmToWheelRotation(-distance));
@@ -170,12 +197,12 @@ public class auto1 extends LinearOpMode {
 
     public void leftDistance(double power,int distance){
         setMotorsStopAndResetEncoders();
-        leftmotor1.setTargetPosition(cmToWheelRotation(distance));
+        leftmotor1.setTargetPosition(cmToWheelRotation(-distance));
         leftmotor2.setTargetPosition(cmToWheelRotation(distance));
-        rightmotor2.setTargetPosition(cmToWheelRotation(distance));
+        rightmotor2.setTargetPosition(cmToWheelRotation(-distance));
         rightmotor1.setTargetPosition(cmToWheelRotation(distance));
         setMotorsRunToPosition();
-        goStraigt(power);
+        leftDrift(power);
         while(encodersAreBusy()){}
         stopWheel();
         setMotorsRunUsingEncoders();
@@ -184,9 +211,9 @@ public class auto1 extends LinearOpMode {
     public void rightDistance(double power,int distance){
         setMotorsStopAndResetEncoders();
         leftmotor1.setTargetPosition(cmToWheelRotation(distance));
-        leftmotor2.setTargetPosition(cmToWheelRotation(distance));
+        leftmotor2.setTargetPosition(cmToWheelRotation(-distance));
         rightmotor2.setTargetPosition(cmToWheelRotation(distance));
-        rightmotor1.setTargetPosition(cmToWheelRotation(distance));
+        rightmotor1.setTargetPosition(cmToWheelRotation(-distance));
         setMotorsRunToPosition();
         goStraigt(power);
         while(encodersAreBusy()){}

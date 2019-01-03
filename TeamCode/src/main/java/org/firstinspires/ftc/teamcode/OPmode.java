@@ -29,15 +29,13 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+
 
 @TeleOp(name="OPmode")
 public class OPmode extends LinearOpMode {
@@ -46,9 +44,9 @@ public class OPmode extends LinearOpMode {
     DcMotor leftmotor2 = null;
     DcMotor rightmotor1 =null;
     DcMotor rightmotor2 =null;
-    DcMotor armlift =null;
-    DcMotor armmain =null;
-    Servo armservo1 =  null;
+    DcMotor armlift = null;
+    DcMotor armmain = null;
+   CRServo armservo1 = null;
     Servo armservo2 = null;
 
 
@@ -60,22 +58,36 @@ public class OPmode extends LinearOpMode {
         leftmotor2 = hardwareMap.get(DcMotor.class, "leftmotor2");
         rightmotor1 = hardwareMap.get(DcMotor.class, "rightmotor1");
         rightmotor2 = hardwareMap.get(DcMotor.class, "rightmotor2");
-        armlift = hardwareMap.get(DcMotor.class, "armlift");
-        armmain = hardwareMap.get(DcMotor.class,"armmain");
-        armservo1 = hardwareMap.get(Servo.class,"armservo1");
-        armservo2 = hardwareMap.get(Servo.class, "armservo2");
+       // armlift = hardwareMap.get(DcMotor.class, "armlift");
+        //armmain = hardwareMap.get(DcMotor.class,"armmain");
+        armservo1 = hardwareMap.get(CRServo.class,"armservo1");
+        //armservo2 = hardwareMap.get(Servo.class, "armservo2");
 
         //reverse motors
         leftmotor2.setDirection(DcMotor.Direction.REVERSE);
         leftmotor1.setDirection(DcMotor.Direction.REVERSE);
-
+        waitForStart();
         //initialize encoders
         while (opModeIsActive()) {
-            
+            armservo1.resetDeviceConfigurationForOpMode();
+            if (gamepad1.x) {
+                armservo1.setPower(-1);
+                armservo1.close();
+            }
+            else if (gamepad1.y){
+                    armservo1.setPower(1);
+                    armservo1.close();
+            }
+            else{
+               //armservo1.setPower(0.0);
+                armservo1.close();
+            }
+            armservo1.close();
             leftmotor1.setPower(0.5*(-gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_x));
             leftmotor2.setPower(0.5*(-gamepad1.left_stick_y+gamepad1.right_stick_x-gamepad1.left_stick_x));
             rightmotor1.setPower(0.5*(-gamepad1.left_stick_y-gamepad1.right_stick_x-gamepad1.left_stick_x));
             rightmotor2.setPower(0.5*(-gamepad1.left_stick_y-gamepad1.right_stick_x+gamepad1.left_stick_x));
+            idle();
         }
     }
 }
