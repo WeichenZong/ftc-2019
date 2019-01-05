@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name="blueLeftCorner")
+@Autonomous(name="LeftCorner")
 public class leftCorner extends auto1 {
     @Override
     public void runOpMode() {

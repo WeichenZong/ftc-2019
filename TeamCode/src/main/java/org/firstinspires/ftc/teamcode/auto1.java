@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -49,12 +50,13 @@ public class auto1 extends LinearOpMode {
     DcMotor rightmotor2 =null;
     DcMotor armlift =null;
     DcMotor armmain =null;
-    Servo armservo1 =  null;
+    CRServo armservo1 =  null;
     Servo armservo2 = null;
     //global varible
     int tetrixencoderfactor=1440;
     int andmarkencoderfactor=1120;
     GoldAlignDetector detector;
+    double ang =60.81;
 
 
 
@@ -66,7 +68,7 @@ public class auto1 extends LinearOpMode {
         rightmotor2 = hardwareMap.get(DcMotor.class, "rightmotor2");
         armlift = hardwareMap.get(DcMotor.class, "armlift");
         armmain = hardwareMap.get(DcMotor.class,"armmain");
-        armservo1 = hardwareMap.get(Servo.class,"armservo1");
+        armservo1 = hardwareMap.get(CRServo.class,"armservo1");
         armservo2 = hardwareMap.get(Servo.class, "armservo2");
 
         //reverse motors
@@ -96,12 +98,14 @@ public class auto1 extends LinearOpMode {
 
         detector.ratioScorer.weight = 5; //
         detector.ratioScorer.perfectRatio = 1.0; // Ratio adjustment
-
+        waitForStart();
         detector.enable(); // Start the detector
+        telemetry.addData("IsAligned" , detector.getAligned()); // Is the bot aligned with the gold mineral?
+        telemetry.addData("X Pos" , detector.getXPosition()); // Gold X position.
 
 
 
-      waitForStart();
+
       // enter your methods here
 
     }
@@ -141,6 +145,9 @@ public class auto1 extends LinearOpMode {
     }
 
     public int cmToWheelRotation(int distance){
+        return (int)(distance/(3.1416*15.2))*tetrixencoderfactor;
+    }
+    public int cmToWheelRotation(double distance){
         return (int)(distance/(3.1416*15.2))*tetrixencoderfactor;
     }
     public int cmToArmRotation(int distance){
@@ -188,7 +195,7 @@ public class auto1 extends LinearOpMode {
         rightmotor2.setTargetPosition(cmToWheelRotation(-distance));
         rightmotor1.setTargetPosition(cmToWheelRotation(-distance));
         setMotorsRunToPosition();
-        goStraigt(-power);
+        goStraigt(power);
         while(encodersAreBusy()){}
         stopWheel();
         setMotorsRunUsingEncoders();
@@ -202,7 +209,7 @@ public class auto1 extends LinearOpMode {
         rightmotor2.setTargetPosition(cmToWheelRotation(-distance));
         rightmotor1.setTargetPosition(cmToWheelRotation(distance));
         setMotorsRunToPosition();
-        leftDrift(power);
+        goStraigt(power);
         while(encodersAreBusy()){}
         stopWheel();
         setMotorsRunUsingEncoders();
@@ -221,5 +228,30 @@ public class auto1 extends LinearOpMode {
         setMotorsRunUsingEncoders();
 
     }
+    public void leftTurn90(){
+        setMotorsStopAndResetEncoders();
+        leftmotor1.setTargetPosition(cmToWheelRotation(-ang));
+        rightmotor1.setTargetPosition(cmToWheelRotation(ang));
+        leftmotor2.setTargetPosition(cmToWheelRotation(-ang));
+        rightmotor2.setTargetPosition(cmToWheelRotation(ang));
+        setMotorsRunToPosition();
+        goStraigt(0.3);
+        while(encodersAreBusy()){}
+        stopWheel();
+        setMotorsRunUsingEncoders();
+    }
+    public void rightTurn90(){
+        setMotorsStopAndResetEncoders();
+        leftmotor1.setTargetPosition(cmToWheelRotation(ang));
+        rightmotor1.setTargetPosition(cmToWheelRotation(-ang));
+        leftmotor2.setTargetPosition(cmToWheelRotation(ang));
+        rightmotor2.setTargetPosition(cmToWheelRotation(-ang));
+        setMotorsRunToPosition();
+        goStraigt(0.3);
+        while(encodersAreBusy()){}
+        stopWheel();
+        setMotorsRunUsingEncoders();
+    }
+
 
 }
