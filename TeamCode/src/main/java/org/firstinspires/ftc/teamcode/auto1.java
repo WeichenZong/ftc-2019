@@ -56,7 +56,9 @@ public class auto1 extends LinearOpMode {
     int tetrixencoderfactor=1440;
     int andmarkencoderfactor=1120;
     GoldAlignDetector detector;
-    double ang =60.81;
+    double pos;
+    double target = 290.0;
+    double k;
 
 
 
@@ -88,7 +90,7 @@ public class auto1 extends LinearOpMode {
         detector.useDefaults(); // Set detector to use default settings
 
         // Optional tuning
-        detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        detector.alignSize = 80; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
         detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
         detector.downscale = 0.4; // How much to downscale the input frames
 
@@ -150,8 +152,8 @@ public class auto1 extends LinearOpMode {
     public int cmToWheelRotation(double distance){
         return (int)(distance/(3.1416*15.2))*tetrixencoderfactor;
     }
-    public int cmToArmRotation(int distance){
-        return  (int) (distance/(3.1416*15.2))*andmarkencoderfactor;
+    public int armToArmRotation(double distance){
+        return  (int) (distance*4.5*50)*andmarkencoderfactor;
     }
     public boolean encodersAreBusy(){
         return leftmotor1.isBusy()&&leftmotor2.isBusy()&&rightmotor2.isBusy()&&rightmotor1.isBusy();
@@ -182,7 +184,9 @@ public class auto1 extends LinearOpMode {
         rightmotor2.setTargetPosition(cmToWheelRotation(distance));
         setMotorsRunToPosition();
         goStraigt(power);
-        while(encodersAreBusy()){}
+        while(encodersAreBusy()){
+            idle();
+        }
         stopWheel();
         setMotorsRunUsingEncoders();
 
@@ -196,7 +200,9 @@ public class auto1 extends LinearOpMode {
         rightmotor1.setTargetPosition(cmToWheelRotation(-distance));
         setMotorsRunToPosition();
         goStraigt(power);
-        while(encodersAreBusy()){}
+        while(encodersAreBusy()){
+            idle();
+        }
         stopWheel();
         setMotorsRunUsingEncoders();
 
@@ -210,7 +216,9 @@ public class auto1 extends LinearOpMode {
         rightmotor1.setTargetPosition(cmToWheelRotation(distance));
         setMotorsRunToPosition();
         goStraigt(power);
-        while(encodersAreBusy()){}
+        while(encodersAreBusy()){
+            idle();
+        }
         stopWheel();
         setMotorsRunUsingEncoders();
 
@@ -223,35 +231,70 @@ public class auto1 extends LinearOpMode {
         rightmotor1.setTargetPosition(cmToWheelRotation(-distance));
         setMotorsRunToPosition();
         goStraigt(power);
-        while(encodersAreBusy()){}
+        while(encodersAreBusy()){
+            idle();
+        }
         stopWheel();
         setMotorsRunUsingEncoders();
 
     }
     public void leftTurn90(){
         setMotorsStopAndResetEncoders();
-        leftmotor1.setTargetPosition(cmToWheelRotation(-ang));
-        rightmotor1.setTargetPosition(cmToWheelRotation(ang));
-        leftmotor2.setTargetPosition(cmToWheelRotation(-ang));
-        rightmotor2.setTargetPosition(cmToWheelRotation(ang));
+        leftmotor1.setTargetPosition(-1600);
+        rightmotor1.setTargetPosition(1600);
+        leftmotor2.setTargetPosition(-1600);
+        rightmotor2.setTargetPosition(1600);
         setMotorsRunToPosition();
         goStraigt(0.3);
-        while(encodersAreBusy()){}
+        while(encodersAreBusy()){
+            idle();
+        }
         stopWheel();
         setMotorsRunUsingEncoders();
     }
     public void rightTurn90(){
         setMotorsStopAndResetEncoders();
-        leftmotor1.setTargetPosition(cmToWheelRotation(ang));
-        rightmotor1.setTargetPosition(cmToWheelRotation(-ang));
-        leftmotor2.setTargetPosition(cmToWheelRotation(ang));
-        rightmotor2.setTargetPosition(cmToWheelRotation(-ang));
+        leftmotor1.setTargetPosition(1600);
+        rightmotor1.setTargetPosition(-1600);
+        leftmotor2.setTargetPosition(1600);
+        rightmotor2.setTargetPosition(-1600);
         setMotorsRunToPosition();
         goStraigt(0.3);
-        while(encodersAreBusy()){}
+        while(encodersAreBusy()){
+            idle();
+        }
         stopWheel();
         setMotorsRunUsingEncoders();
     }
+    public void pushYellow () {
+        setMotorsRunToPosition();
+        for (int i = 0;i < 2; ++i){
+            if (detector.isFound())
+            {
+                pos = detector.getXPosition();
+                while(!detector.getAligned()){
+                    goStraigt((target-pos)/700);
+                    idle();
+                }
+                stopWheel();
+                break;
+            }
+            else{
+                forwordDistance(0.5,15);
+            }
+        }
+    }
+    public void goUp(double distance){
+        armlift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armlift.setTargetPosition(armToArmRotation(distance));
+        armlift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        armlift.setPower(1);
+        while (armlift.isBusy()){
+            idle();
+        }
+        armlift.setPower(0);
+        armlift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 
 }
