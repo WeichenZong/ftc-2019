@@ -47,6 +47,7 @@ public class OPmode extends LinearOpMode {
     DcMotor armlift = null;
     DcMotor armmain = null;
    CRServo armservo1 = null;
+   CRServo linear = null;
     Servo armservo2 = null;
 
 
@@ -58,9 +59,10 @@ public class OPmode extends LinearOpMode {
         leftmotor2 = hardwareMap.get(DcMotor.class, "leftmotor2");
         rightmotor1 = hardwareMap.get(DcMotor.class, "rightmotor1");
         rightmotor2 = hardwareMap.get(DcMotor.class, "rightmotor2");
-       // armlift = hardwareMap.get(DcMotor.class, "armlift");
-        //armmain = hardwareMap.get(DcMotor.class,"armmain");
+        armlift = hardwareMap.get(DcMotor.class, "armlift");
+        armmain = hardwareMap.get(DcMotor.class,"armmain");
         armservo1 = hardwareMap.get(CRServo.class,"armservo1");
+        linear = hardwareMap.get(CRServo.class,"linear");
         //armservo2 = hardwareMap.get(Servo.class, "armservo2");
 
         //reverse motors
@@ -83,10 +85,13 @@ public class OPmode extends LinearOpMode {
                 armservo1.close();
             }
             armservo1.close();
-            leftmotor1.setPower(0.5*(-gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_x));
-            leftmotor2.setPower(0.5*(-gamepad1.left_stick_y+gamepad1.right_stick_x-gamepad1.left_stick_x));
-            rightmotor1.setPower(0.5*(-gamepad1.left_stick_y-gamepad1.right_stick_x-gamepad1.left_stick_x));
-            rightmotor2.setPower(0.5*(-gamepad1.left_stick_y-gamepad1.right_stick_x+gamepad1.left_stick_x));
+            leftmotor1.setPower(0.4*(-gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_x)+5*(gamepad1.right_trigger-gamepad1.left_trigger));
+            leftmotor2.setPower(0.4*(-gamepad1.left_stick_y+gamepad1.right_stick_x-gamepad1.left_stick_x)+5*(gamepad1.right_trigger-gamepad1.left_trigger));
+            rightmotor1.setPower(0.4*(-gamepad1.left_stick_y-gamepad1.right_stick_x-gamepad1.left_stick_x)+5*(gamepad1.right_trigger-gamepad1.left_trigger));
+            rightmotor2.setPower(0.4*(-gamepad1.left_stick_y-gamepad1.right_stick_x+gamepad1.left_stick_x)+5*(gamepad1.right_trigger-gamepad1.left_trigger));
+            armmain.setPower(gamepad2.right_stick_y);
+            armlift.setPower(gamepad2.left_stick_y);
+            linear.setPower(5*(-gamepad2.left_trigger+gamepad2.right_trigger));
             idle();
         }
     }

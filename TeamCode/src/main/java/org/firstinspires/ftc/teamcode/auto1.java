@@ -153,7 +153,7 @@ public class auto1 extends LinearOpMode {
         return (int)(distance/(3.1416*15.2))*tetrixencoderfactor;
     }
     public int armToArmRotation(double distance){
-        return  (int) (distance*4.5*50)*andmarkencoderfactor;
+        return  (int) (distance*1.5*25)*andmarkencoderfactor;
     }
     public boolean encodersAreBusy(){
         return leftmotor1.isBusy()&&leftmotor2.isBusy()&&rightmotor2.isBusy()&&rightmotor1.isBusy();
