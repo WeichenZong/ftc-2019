@@ -18,29 +18,40 @@ public class leftCorner extends auto1  {
         forwordDistance(0.5,10);
         idle();
         YellowPosition();
-        for(int i=0;i<2 ; i++){
 
             if (isLeft) {
                 leftDistance(0.5,30);
                 backwardDistance(0.5,40);
                 leftDistance(0.5,30);
                 rightDistance(0.5,25);
-                break;
-            } else if (isMiddle) {
-                backwardDistance(0.5,5);
+                backwardDistance(0.8,60);
+                leftTurn45();
+                backwardDistance(0.5,65);
+                armservo2.setPosition(5);
+                idle();
+            } else if (isMiddle||detector.getAligned()) {
+                backwardDistance(0.5,10);
                 idle();
                 leftDistance(0.5,55);
-                forwordDistance(1,5);
+                idle();
                 rightDistance(0.5,25);
-                break;
+                backwardDistance(0.8,100);
+                idle();
+                leftTurn45();
+                backwardDistance(0.5,65);
+                armservo2.setPosition(5);
+                idle();
             } else if (isRight||!detector.isFound()) {
-                leftDistance(0.5,40);
+                leftDistance(0.5,30);
                 forwordDistance(0.5,40);
                 leftDistance(0.5,30);
                 rightDistance(0.5,25);
-                break;
+                backwardDistance(0.8,140);
+                leftTurn45();
+                backwardDistance(0.5,65);
+                armservo2.setPosition(5);
+                idle();
             }
-        }
 
     }
 }

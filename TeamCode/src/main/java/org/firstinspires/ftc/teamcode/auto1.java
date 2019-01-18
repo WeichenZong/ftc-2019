@@ -106,6 +106,7 @@ public class auto1 extends LinearOpMode {
         detector.enable(); // Start the detector
         telemetry.addData("IsAligned" , detector.getAligned()); // Is the bot aligned with the gold mineral?
         telemetry.addData("X Pos" , detector.getXPosition()); // Gold X position.
+        armservo2.setPosition(0);
 
     }
 
@@ -162,7 +163,7 @@ public class auto1 extends LinearOpMode {
         else if(detector.getXPosition()<250) {
             isLeft =true;
         }
-        else if(detector.getXPosition()>450){
+        else if(detector.getXPosition()>500){
             isRight=true;
         }
         else {
@@ -269,6 +270,34 @@ public class auto1 extends LinearOpMode {
         rightmotor1.setTargetPosition(-1600);
         leftmotor2.setTargetPosition(1600);
         rightmotor2.setTargetPosition(-1600);
+        setMotorsRunToPosition();
+        goStraigt(0.3);
+        while(encodersAreBusy()){
+            idle();
+        }
+        stopWheel();
+        setMotorsRunUsingEncoders();
+    }
+    public void leftTurn45(){
+        setMotorsStopAndResetEncoders();
+        leftmotor1.setTargetPosition(-750);
+        rightmotor1.setTargetPosition(750);
+        leftmotor2.setTargetPosition(-750);
+        rightmotor2.setTargetPosition(750);
+        setMotorsRunToPosition();
+        goStraigt(0.3);
+        while(encodersAreBusy()){
+            idle();
+        }
+        stopWheel();
+        setMotorsRunUsingEncoders();
+    }
+    public void rightTurn45(){
+        setMotorsStopAndResetEncoders();
+        leftmotor1.setTargetPosition(750);
+        rightmotor1.setTargetPosition(-750);
+        leftmotor2.setTargetPosition(750);
+        rightmotor2.setTargetPosition(-750);
         setMotorsRunToPosition();
         goStraigt(0.3);
         while(encodersAreBusy()){
