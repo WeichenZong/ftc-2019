@@ -59,7 +59,9 @@ public class auto1 extends LinearOpMode {
     double pos;
     double target = 290.0;
     double k;
-
+    boolean isMiddle = false;
+    boolean isLeft = false;
+    boolean isRight = false;
 
 
     public void runOpMode() {
@@ -105,11 +107,6 @@ public class auto1 extends LinearOpMode {
         telemetry.addData("IsAligned" , detector.getAligned()); // Is the bot aligned with the gold mineral?
         telemetry.addData("X Pos" , detector.getXPosition()); // Gold X position.
 
-
-
-
-      // enter your methods here
-
     }
 
     public void goStraigt(double power){
@@ -147,16 +144,30 @@ public class auto1 extends LinearOpMode {
     }
 
     public int cmToWheelRotation(int distance){
-        return (int)(distance/(3.1416*15.2))*tetrixencoderfactor;
+        return (int)((distance/(3.1416*15.2))*tetrixencoderfactor);
     }
     public int cmToWheelRotation(double distance){
         return (int)(distance/(3.1416*15.2))*tetrixencoderfactor;
     }
     public int armToArmRotation(double distance){
-        return  (int) (distance*1.5*25)*andmarkencoderfactor;
+        return  (int) (((distance*1.5*25)*andmarkencoderfactor));
     }
     public boolean encodersAreBusy(){
         return leftmotor1.isBusy()&&leftmotor2.isBusy()&&rightmotor2.isBusy()&&rightmotor1.isBusy();
+    }
+    public void YellowPosition(){
+        if(!detector.isFound()) {
+            isRight = true;}
+
+        else if(detector.getXPosition()<250) {
+            isLeft =true;
+        }
+        else if(detector.getXPosition()>450){
+            isRight=true;
+        }
+        else {
+            isMiddle=true;
+        }
     }
     public void setMotorsStopAndResetEncoders(){
         leftmotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -199,7 +210,7 @@ public class auto1 extends LinearOpMode {
         rightmotor2.setTargetPosition(cmToWheelRotation(-distance));
         rightmotor1.setTargetPosition(cmToWheelRotation(-distance));
         setMotorsRunToPosition();
-        goStraigt(power);
+        goStraigt(-power);
         while(encodersAreBusy()){
             idle();
         }
@@ -215,7 +226,7 @@ public class auto1 extends LinearOpMode {
         rightmotor2.setTargetPosition(cmToWheelRotation(-distance));
         rightmotor1.setTargetPosition(cmToWheelRotation(distance));
         setMotorsRunToPosition();
-        goStraigt(power);
+        leftDrift(power);
         while(encodersAreBusy()){
             idle();
         }
@@ -230,7 +241,7 @@ public class auto1 extends LinearOpMode {
         rightmotor2.setTargetPosition(cmToWheelRotation(distance));
         rightmotor1.setTargetPosition(cmToWheelRotation(-distance));
         setMotorsRunToPosition();
-        goStraigt(power);
+        rightDrift(power);
         while(encodersAreBusy()){
             idle();
         }
@@ -296,5 +307,6 @@ public class auto1 extends LinearOpMode {
         armlift.setPower(0);
         armlift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
 
 }
